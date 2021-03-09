@@ -1,0 +1,97 @@
+body{
+    display: flex;
+    background-color: rgb(243, 237, 150);
+    height: 100vh;
+}
+
+#hidari{
+    background-color: #e6e5e1;
+    width: 35%;
+    height: 95%;
+    text-align: center;
+    display: none;
+    border:pink dotted 10px;
+    margin: auto 20px;
+}
+
+p{
+    margin: 20px auto;
+}
+
+#migi{
+    width: 65%;
+    height: 95%;
+}
+
+.past{
+   text-align: center;
+   font-size: 2pc;
+    border: pink 5px dotted;
+    margin: 30px 100px;
+    color: lightslategray;
+}
+
+.jidou{
+font-size: 15px;
+height: 95%;
+margin: 20px auto;
+}
+
+.smallf{
+    font-size: 10px;
+}
+
+#text{
+    box-shadow: rgb(80, 77, 80) 2px 3px 10px;
+}
+
+.bota{
+    margin: 10px auto;
+}
+ 
+table{
+width: 100%;
+display: block;
+position: relative;
+height: 500px;
+border-radius: 2%;
+background-color: rgb(245, 244, 244);
+font-size: 12px;
+border-collapse: collapse;
+/* overflow: auto; */
+overflow: scroll;
+}
+
+th{
+  color: rgb(250, 248, 248);
+  font-size: 15px;
+  background-color: rgb(236, 83, 167);
+  /* height: 15px;
+  margin: 5px auto; */
+  }
+
+td,th{
+text-align: center; 
+border-bottom:1px #ccc solid;
+width:140px;
+padding:8px;
+border: dashed 1px black;
+ /* border: solid 1px black;	 */
+}
+
+thead,tbody {
+  display: block;
+ width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+thead {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.cau{
+font-size: 10px;
+}

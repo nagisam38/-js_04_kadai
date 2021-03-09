@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <title>＜〇〇小学校＞連絡帳アプリ</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+
+<body>
+
+  <!-- 固定・自動表示 -->
+<div id="hidari">
+ <div class="jidou">
+  <p class="smallf">
+    入力日時：<span id="showdate"></span>
+  </p>
+ 
+    <p>
+    氏名：<input type="text" id="username">
+    </p>
+
+    <p>
+    所属：<select id="myclass1"></select>年<select id="myclass2"></select>組
+    </p>
+
+   <p>
+    指定日：<input type="date" id="designated">
+    </p>
+
+    <p>
+    カテゴリ:<select class="category">
+      <option  value="absence"> 欠席連絡 </option>
+	    <option  value="late"> 遅刻連絡 </option>
+	    <option  value="leave early"> 早退連絡 </option>
+      <option  value="consultation"> 面談希望 </option>
+      <option  value="other"> その他 </option>
+      <option  value="teacher"> 担任より</option>
+     </select>
+     </p>
+  
+    
+    <form>
+    <textarea id="text" cols="40" rows="20" placeholder="・・・・連絡事項をご入力ください・・・・"></textarea>
+    </form>
+    
+  <div class="bota">
+    <button id="send">入力内容を送信する</button>
+    <p class="cau">送信の取消はできません。<br>入力内容に訂正がある場合には、内容を改めたうえ再度送信してください。</p>
+  </div>
+ </div> 
+</div>
+
+
+
+  <div id="migi">
+    <div class="past">連絡帳履歴</div>
+
+     
+      <table id = "messages">
+
+        <thead>
+          <th>氏名</th>
+          <th>所属</th>
+          <th>年-月-日</th>
+          <th>カテゴリ</th>
+          <th>連絡事項</th>
+        </thead>
+
+        <tbody>
+        <tr>
+        <!-- <td></td>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td></td>  -->
+         </tr>
+        </tbody>
+
+      </table>
+    
+
+
+  </div>
+
+
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+
+  <!--以下Firebase-->
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!-- firebaseのscript -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase.js"></script>
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "",
+      authDomain: "",
+      databaseURL: "",
+      projectId: "",
+      storageBucket: "",
+      messagingSenderId: "",
+      appId: ""
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    //firebaseのデーターベース（保存させる場所）
+    const newPostRef = firebase.database().ref();
+
+    // const db = firebase.firestore();
+    // db.settings({
+    // timestampsInSnapshots: true
+    //  });
+
+
+   $("#hidari").fadeIn(1000);
+
+//日付自動表示
+   let now = new Date();
+   let Y = now.getFullYear();
+   let M = now.getMonth() + 1;
+   let D = now.getDate();
+   let W = now.getDay();
+   let DotW = ['日', '月', '火', '水', '木', '金', '土'];
+   let h = now.getHours();
+   let m = now.getMinutes();
+   let showdate = [Y + '年' + M + '月' + D + '日' + '(' + DotW[W] + ')' + h + '時' + m + '分'];
+   $("#showdate").html(showdate);
+
+
+
+  //所属クラス選択
+
+    function myclass(start,end){
+    let kumi = " ";
+    for(let r=start ; r<=end ; r++){
+     kumi +=`<option>${r}</option>`;
+    }
+    return kumi;
+  }
+   const grade = myclass(1,6);
+   const team = myclass(1,3);
+
+    $("#myclass1").html(grade);
+    $("#myclass2").html(team);
+
+
+    // 送信ボタンをクリックした時の処理
+    $("#send").on("click", function () {
+      // Firebaseのデータの末尾に｛｝内のデータを追加する（送る）
+      newPostRef.push({
+        
+        mygrade: $("#myclass1").val(),//学年
+        myteam: $("#myclass2").val(),//組
+        username: $("#username").val(), //名前
+        designated: $("#designated").val(),//指定日
+        category: $(".category option:selected").text(),//カテゴリ
+        text: $("#text").val() //テキストエリア
+      });
+      // 空にする処理
+      $("#text").val(""); 
+      $("#username").val(""); 
+      $("#designated").val("");
+      $(".category").val("");
+      $("#myclass1").val("");
+      $("#myclass2").val("");
+
+    
+
+    // var html = '<tr><td class="output"></td><td class="output"></td><td class="output"></td><td class="output"></td><td class="output"></td></tr>';
+    //     $("tbody").append(html);
+
+
+      // var html = '<tr><td class="output1"></td><td class="output2"></td><td class="output3"></td><td class="output4"></td><td class="output5"></td></tr>';
+      //   $("tbody").append(html);
+    });
+
+
+    // 受信する処理
+
+//     var ignoreItems = true;
+// var ref = new Firebase('https://camp08-7c2ac-default-rtdb.firebaseio.com/');
+// ref.on('child_added', function(snapshot) {
+//   if (!ignoreItems) {
+//     var msg = snapshot.val().msg;
+//     // do something here
+//   }
+// });
+// ref.once('value', function(snapshot) {
+//   ignoreItems = false;
+// });
+
+ newPostRef.on("child_added", function (data) {
+      let v = data.val(); //保存データが入る
+      let k = data.key;//データのキーが入る
+    //  if(val===""){
+    //    return;
+    //  }
+      // console.log(kako.designated);
+            // let str1 = '<td>'+kako.username+'</td>';
+            // let str2 = '<td>'+kako.mygrade+'年'+kako.myteam+'組</td>';
+            // let str3 = '<td>'+kako.designated+'</td>';
+            // let str4 = '<td>'+kako.category+'</td>';
+            // let str5 = '<td>'+kako.text+'</td>';
+            // ここでデータをhtmlに埋め込む
+            
+            
+            // let str ="";
+            // let str1 ="";
+            // let str2 ="";
+            // let str3 ="";
+            // let str4 ="";
+            // let str5 ="";
+            // let str6 ="";
+
+          
+            // str1='<p>'+v.username+'</p>';
+            // str2='<p>'+v.mygrade+'年'+kako.myteam+'組</p>';
+            // str3='<p>'+v.designated+'</p>';
+            // str4='<p>'+v.category+'</p>';
+            // str5='<p>'+v.text+'</p>';
+             let str ="";
+            str+='<tr>';
+            str+='<td>'+v.username+'</td>';
+            str+='<td>'+v.mygrade+'年'+v.myteam+'組</td>';
+            str+='<td>'+v.designated+'</td>';
+            str+='<td>'+v.category+'</td>';
+            str+='<td>'+v.text+'</td>';
+            str+='</tr>';
+           
+
+            // let str1 = v.username;
+            // let str2 = v.mygrade+'年'+kako.myteam+'組';
+            // let str3 = v.designated;
+            // let str4 = v.category;
+            // let str5 = v.text;
+
+
+
+        
+            // let matome= {str1 ,str2 ,str3, str4, str5};
+            
+            // $(".output1").html(str1); 
+            // $(".output2").html(str2);
+            // $(".output3").html(str3);
+            // $(".output4").html(str4);
+            // $(".output5").html(str5);
+
+          
+            // $(".output1").append(str1); 
+            // $(".output2").append(str2);
+            // $(".output3").append(str3);
+            // $(".output4").append(str4);
+            // $(".output5").append(str5);
+
+            // $(".output1").append(str1);  
+            // $(".output2").append(str2);
+            // $(".output3").append(str3);
+            // $(".output4").append(str4);
+            // $(".output5").append(str5);
+            $("tbody").append(str);
+
+            // $(".yam").append(matome); 
+           
+                  
+    });
+    
+
+
+
+
+ 
+  </script>
+
+</body>
+
+</html>
+
+<!-- 行の追加機能
+コメント削除機能 -->
